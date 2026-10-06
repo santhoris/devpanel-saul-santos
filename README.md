@@ -3,6 +3,11 @@
 Prueba técnica: login real, dashboard con métricas y tabla de usuarios con búsqueda.
 Todo corre en un solo proceso, sin Docker y sin base de datos externa.
 
+> Esta demo usa el nombre y el logotipo de **Credicorp Bank** únicamente como
+> ambientación visual del ejercicio: no es un producto de Credicorp Bank ni tiene
+> ninguna relación con el banco. El nombre técnico del repo y del proyecto es
+> **DevPanel**. Ver §8 del `AI-LOG.md`.
+
 ---
 
 ## Credenciales de prueba (para entrar de una)
@@ -112,6 +117,7 @@ devpanel-saul/
 │       ├── api.ts                    fetch con Bearer + manejo de 401
 │       └── types.ts                  tipos compartidos
 ├── scripts/reset-db.mjs              borra la base local (se regenera sola)
+├── public/logo.jpg                   logo de la marca (servido por Next)
 ├── README.md                         estas instrucciones
 ├── AI-LOG.md                         bitácora del uso de IA (obligatoria)
 ├── AGENTS.md                         contexto que se le entrega a los agentes de IA

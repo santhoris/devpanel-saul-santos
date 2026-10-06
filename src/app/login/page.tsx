@@ -44,24 +44,19 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center px-4">
+    <main className="grid min-h-screen place-items-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-8 flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-lg bg-indigo-500 font-bold">
-            D
-          </span>
-          <div>
-            <h1 className="text-lg font-semibold leading-tight">DevPanel</h1>
-            <p className="text-xs text-slate-400">Panel de administracion</p>
-          </div>
+        <div className="mb-8 flex flex-col items-center gap-3 text-center">
+          <img src="/logo.jpg" alt="Credicorp Bank" className="h-12 w-auto" />
+          <p className="text-xs text-slate-500">Panel de administración</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/60 p-6"
+          className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
         >
           <div className="space-y-1">
-            <label htmlFor="email" className="text-sm text-slate-300">
+            <label htmlFor="email" className="text-sm text-slate-600">
               Email
             </label>
             <input
@@ -71,12 +66,12 @@ export default function LoginPage() {
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
             />
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="password" className="text-sm text-slate-300">
+            <label htmlFor="password" className="text-sm text-slate-600">
               Contrasena
             </label>
             <input
@@ -86,14 +81,14 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
             />
           </div>
 
           {error ? (
             <p
               role="alert"
-              className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-300"
+              className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700"
             >
               {error}
             </p>
@@ -102,7 +97,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-60"
+            className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
           >
             {loading ? "Ingresando…" : "Ingresar"}
           </button>
@@ -112,7 +107,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={fillDemoCredentials}
-            className="text-xs font-medium text-indigo-400 underline-offset-4 transition hover:text-indigo-300 hover:underline"
+            className="text-xs font-medium text-emerald-700 underline-offset-4 transition hover:text-emerald-800 hover:underline"
           >
             Usar credenciales demo
           </button>

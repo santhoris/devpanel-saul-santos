@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DevPanel",
-  description: "Mini panel de administracion con login, dashboard y tabla de usuarios",
+  title: "Credicorp Bank",
+  description: "Panel de administracion con login, dashboard y tabla de usuarios",
 };
 
 export default function RootLayout({
@@ -11,7 +11,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es">
-      <body className="min-h-screen bg-slate-950 text-slate-100 antialiased">
+      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
         {children}
       </body>
     </html>

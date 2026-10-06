@@ -119,7 +119,7 @@ export default function DashboardPage() {
 
   if (!ready || !session) {
     return (
-      <main className="grid min-h-screen place-items-center text-slate-400">
+      <main className="grid min-h-screen place-items-center text-slate-500">
         Cargando panel…
       </main>
     );
@@ -132,7 +132,7 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <section>
           <h1 className="text-xl font-semibold">Resumen</h1>
-          <p className="text-sm text-slate-400">Estado general de la plataforma</p>
+          <p className="text-sm text-slate-500">Estado general de la plataforma</p>
         </section>
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -162,7 +162,7 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-semibold">Usuarios</h2>
-              <p className="text-sm text-slate-400">{total} registros</p>
+              <p className="text-sm text-slate-500">{total} registros</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -171,12 +171,12 @@ export default function DashboardPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar por nombre o email…"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-500 sm:w-64"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 sm:w-64"
               />
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as "" | Role)}
-                className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
               >
                 <option value="">Todos los roles</option>
                 <option value="admin">admin</option>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as "" | Status)}
-                className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
               >
                 <option value="">Todos los estados</option>
                 <option value="active">active</option>
@@ -199,7 +199,7 @@ export default function DashboardPage() {
           {error ? (
             <p
               role="alert"
-              className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-300"
+              className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700"
             >
               {error}
             </p>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
 
           <UsersTable users={users} loading={loadingUsers} />
 
-          <div className="flex items-center justify-between text-sm text-slate-400">
+          <div className="flex items-center justify-between text-sm text-slate-500">
             <span>
               Pagina {page} de {pages}
             </span>
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1 || loadingUsers}
-                className="rounded-lg border border-slate-700 px-3 py-1.5 transition hover:border-slate-500 hover:text-white disabled:opacity-40"
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 disabled:opacity-40"
               >
                 Anterior
               </button>
@@ -224,7 +224,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(pages, p + 1))}
                 disabled={page >= pages || loadingUsers}
-                className="rounded-lg border border-slate-700 px-3 py-1.5 transition hover:border-slate-500 hover:text-white disabled:opacity-40"
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 disabled:opacity-40"
               >
                 Siguiente
               </button>

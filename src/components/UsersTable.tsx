@@ -12,9 +12,9 @@ export function UsersTable({
   loading: boolean;
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-800">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-900/80 text-xs uppercase tracking-wide text-slate-400">
+        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
           <tr>
             <th className="px-4 py-3 font-medium">Usuario</th>
             <th className="px-4 py-3 font-medium">Rol</th>
@@ -26,16 +26,16 @@ export function UsersTable({
         <tbody className={loading ? "opacity-40 transition-opacity" : "transition-opacity"}>
           {users.length === 0 ? (
             <tr>
-              <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
+              <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
                 {loading ? "Cargando…" : "Sin resultados"}
               </td>
             </tr>
           ) : (
             users.map((user) => (
-              <tr key={user.id} className="border-t border-slate-800/70">
+              <tr key={user.id} className="border-t border-slate-100 transition-colors hover:bg-slate-50">
                 <td className="px-4 py-3">
                   <p className="font-medium">{user.name}</p>
-                  <p className="text-xs text-slate-400">{user.email}</p>
+                  <p className="text-xs text-slate-500">{user.email}</p>
                 </td>
                 <td className="px-4 py-3">
                   <Badge value={user.role} kind="role" />
@@ -43,8 +43,8 @@ export function UsersTable({
                 <td className="px-4 py-3">
                   <Badge value={user.status} kind="status" />
                 </td>
-                <td className="px-4 py-3 text-slate-400">{formatDate(user.created_at)}</td>
-                <td className="px-4 py-3 text-slate-400">{formatDate(user.last_login)}</td>
+                <td className="px-4 py-3 text-slate-500">{formatDate(user.created_at)}</td>
+                <td className="px-4 py-3 text-slate-500">{formatDate(user.last_login)}</td>
               </tr>
             ))
           )}

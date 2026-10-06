@@ -240,3 +240,42 @@ archivos): 5+ minutos sin una línea, tuve que matarlo. Con el mismo modelo y un
 petición acotada a un archivo respondió al instante — la IA acelera escribir, no
 reemplaza verificar, y el tamaño del encargo decide si el agente sirve o se
 atasca.
+
+## 8. Pulido posterior al cierre: re-skin visual (Credicorp Bank)
+
+**Esto es posterior al límite de las 2 h.** El cuerpo del examen (commits
+`6f23476`..`ad5d3ee`) quedó congelado funcionalmente; lo que sigue es una
+iteración de **presentación**, no de lógica.
+
+**Qué cambié y por qué.** La UI venía con la estética por defecto de un panel
+generado por IA: fondo `slate-950` oscuro + acento `indigo`/violeta. Se veía
+correcto, pero era el "look genérico de IA". Decidí rebrandear la interfaz como
+**Credicorp Bank** (se usaron su nombre y su logotipo reales solo como
+ambientación de la demo; el proyecto técnico sigue siendo DevPanel y no tiene
+ninguna relación con el banco) para que se lea como el panel de un banco real:
+
+- **Paleta corporativa clara**: fondo `slate-50`, superficies blancas con
+  `shadow-sm`, texto `slate-900`/`slate-500`.
+- **Verde esmeralda** (`emerald-600`/`emerald-700`) como único color primario:
+  botones, foco de inputs, links y chip de rol. El verde sustituye al índigo.
+- **Logo real** (`public/logo.jpg`, 986×189) en el login y en el header, en lugar
+  del monograma "D" anterior.
+- **Métricas con acento verde sutil** (`border-l-4 border-emerald-500`) para que
+  las "cards verdes" del dashboard no griten.
+- **Badges en versión light** (`bg-emerald-100 text-emerald-700`, etc.).
+
+**Alcance deliberado:** no toqué la capa de datos, la auth, los endpoints ni los
+seeds. Los emails de prueba siguen en `@devpanel.io` a propósito, para no
+invalidar el README, la tabla de validación (§5) ni el conteo de 137 usuarios.
+La regla de "no dejar usuarios fijos en un JSON" sigue igual de cumplida: la
+identidad es solo de presentación.
+
+**Validado con:** `npm run build` (0 errores de typecheck) y el mismo checklist
+manual de P0/P1 (login, métricas, búsqueda con debounce, paginación, filtros,
+logout, 401, reload e incógnito). Comprobé por grep que no quedara ningún
+`indigo` ni superficie oscura.
+
+**Honestidad:** este re-skin lo ejecutó el agente (OpenCode) sobre mi indicación
+de dirección estética y decisiones (tema claro, verde esmeralda, solo UI, cards
+con acento sutil). El valor del examen sigue estando en las decisiones y la
+validación del cuerpo original, no en esta capa cosmética.
