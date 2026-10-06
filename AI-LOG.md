@@ -66,7 +66,9 @@ de configuración.
 **Qué hice con eso:** lo corrí en el servidor y **probé cada endpoint con curl**
 antes de aceptarlo (§5). Encontré y corregí lo que se describe en §4.
 
-### 3.2 Prompt de revisión (OpenCode)
+### 3.2 Prompts de revisión (OpenCode) — dos intentos
+
+**Intento A (falló):**
 
 > "Revisa este repo (Next.js 15 + SQLite + JWT). Busca SOLO bugs reales de
 > seguridad o correctitud en: src/lib/db.ts, src/lib/auth.ts, src/app/api/**,
@@ -74,8 +76,24 @@ antes de aceptarlo (§5). Encontré y corregí lo que se describe en §4.
 > hallazgos, cada uno como 'archivo:línea -> problema -> fix de una línea'.
 > Nada de estilo ni de sugerencias de tests. Si algo está bien, no lo menciones."
 
-**Qué devolvió:** nada. Se quedó corriendo más de 5 minutos sin producir salida.
-Ver §4.2.
+**Qué devolvió:** nada. Corrió más de 5 minutos sin escribir una sola línea; lo
+terminé a la fuerza (exit `-15`, salida vacía). Ver §4.2.
+
+**Intento B (sí funcionó):** acoté a un archivo y le di una salida trivial de
+verificar:
+
+> "Lee src/app/api/users/route.ts y dime en máximo 3 líneas si hay algún bug real
+> de seguridad o correctitud. Si no hay ninguno, responde exactamente:
+> SIN_BUGS."
+
+**Qué devolvió:** en segundos. Leyó el archivo y respondió `SIN_BUGS`.
+
+**Qué hice con eso:** lo traté como una **segunda opinión, no como una
+verificación**. Los bugs que importan ya los había encontrado yo ejecutando el
+código (§4.1); que OpenCode dijera "sin bugs" en un archivo que ya había
+corregido era el resultado esperado, no una prueba de nada. No le di valor
+probatorio: la misma herramienta que se calló 5 minutos no es una fuente en la
+que apoyarse.
 
 ## 4. Cosas que la IA me dio y **rechacé o modifiqué**
 
@@ -123,12 +141,20 @@ después de una carga exitosa. Añadí `setError(null)` al iniciar cada fetch.
 **(e) Rechacé `bcryptjs`.** Era la opción por defecto razonable; la cambié por
 `scrypt` nativo (ver §2). Menos dependencias y más fuerte.
 
-### 4.2 Rechacé el resultado de OpenCode (por ausencia de resultado)
+### 4.2 Rechacé el resultado de OpenCode (primero porque no hubo resultado)
 
-Le pedí a OpenCode la revisión del §3.2 y **se quedó colgado más de 5 minutos sin
-devolver una sola línea**. Decidí no esperarlo: lo maté, hice yo la revisión con
-pruebas de casos borde contra el servidor corriendo, y **encontré cosas que el
-código "aceptado tal cual" no mostraba** — el bug del `%` de (a) salió de ahí.
+Le pedí a OpenCode la revisión del §3.2 (intento A: 6 archivos, "lista máximo 6
+hallazgos") y **se quedó colgado más de 5 minutos sin devolver una sola línea**.
+Decidí no esperarlo: lo maté, hice yo la revisión con pruebas de casos borde
+contra el servidor corriendo, y **encontré cosas que el código "aceptado tal
+cual" no mostraba** — el bug del `%` de (a) salió de ahí.
+
+Después rehice la petición mucho más acotada (intento B: **un solo archivo**, con
+una respuesta trivial de verificar). Ahí sí contestó en segundos. La lección no
+es "el agente no sirve", es que **el alcance del prompt decide si sirve**: un
+"revisa todo el repo" contra un modelo rápido se quedó mudo; un "lee este archivo
+y responde esto" funcionó al instante. Lo anoté como corrección de método, no
+como bug de la herramienta.
 
 Moraleja que me llevo: un agente de IA es rápido escribiendo y lento (y a veces
 mudo) validando. La validación no se delega.
@@ -183,6 +209,8 @@ datos en cualquier máquina, sin dependencias.
 **Mal:** dos cosas. (1) El agente **no valida lo que escribe**: el bug del `LIKE`
 con `%` y el error de scope de `BULK` son exactamente el tipo de fallo que no se
 ve leyendo el código y sí ejecutándolo. Lo tomé como regla: nada entra sin
-correrlo. (2) **OpenCode se colgó** en una tarea de revisión de 6 archivos y no
-devolvió nada en 5+ minutos; tuve que descartarlo y revisar a mano. La IA
-acelera escribir, no reemplaza verificar.
+correrlo. (2) **OpenCode se quedó mudo** con una petición de revisión amplia (6
+archivos): 5+ minutos sin una línea, tuve que matarlo. Con el mismo modelo y una
+petición acotada a un archivo respondió al instante — la IA acelera escribir, no
+reemplaza verificar, y el tamaño del encargo decide si el agente sirve o se
+atasca.
