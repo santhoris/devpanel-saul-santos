@@ -13,6 +13,9 @@ Todo corre en un solo proceso, sin Docker y sin base de datos externa.
 | editor | editor@devpanel.io    | `Editor123!` |
 | viewer | viewer@devpanel.io    | `Viewer123!` |
 
+El login arranca con los campos vacíos; puedes pulsar **"Usar credenciales demo"**
+en la propia pantalla de login para rellenarlas de un clic.
+
 La base de datos se crea y se puebla **sola** con 137 usuarios la primera vez que
 el servidor recibe una petición. No hay paso de migración ni de seed manual.
 
@@ -45,7 +48,7 @@ hacer `npm install && npm run dev` dentro de la carpeta.
 
 ### Comprobar en 60 segundos que funciona
 
-1. Abres http://localhost:3000/login → los campos están vacíos; el enlace "Usar credenciales demo" los rellena y entras → llegas al dashboard.
+1. Abres http://localhost:3000/login (los campos están vacíos) → entras con las credenciales de arriba, o pulsas **"Usar credenciales demo"** → llegas al dashboard.
 2. El dashboard muestra 4 tarjetas (137 usuarios, 81 activos, 15 admins, 26 pendientes).
 3. Escribes `ana` en el buscador → la tabla filtra sin recargar la página.
 4. Recargas con F5 → sigues dentro (sesión persistente).
@@ -94,23 +97,36 @@ hacer `npm install && npm run dev` dentro de la carpeta.
 ## Estructura
 
 ```
-src/
-├── app/
-│   ├── api/
-│   │   ├── auth/login/route.ts   POST login
-│   │   ├── auth/me/route.ts      validar sesión
-│   │   ├── users/route.ts        listado + búsqueda + paginación
-│   │   └── metrics/route.ts      métricas del dashboard
-│   ├── login/page.tsx
-│   ├── dashboard/page.tsx        ruta protegida
-│   └── layout.tsx
-├── components/                   Badge, MetricCard, UsersTable, DashboardHeader
-└── lib/
-    ├── db.ts                     SQLite + seed determinista
-    ├── auth.ts                   firmar/verificar JWT
-    ├── api.ts                    fetch con Bearer + manejo de 401
-    └── types.ts                  tipos compartidos
+devpanel-saul/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── auth/login/route.ts   POST login
+│   │   │   ├── auth/me/route.ts      validar sesión
+│   │   │   ├── users/route.ts        listado + búsqueda + paginación
+│   │   │   └── metrics/route.ts      métricas del dashboard
+│   │   ├── login/page.tsx
+│   │   ├── dashboard/page.tsx        ruta protegida
+│   │   └── layout.tsx
+│   ├── components/                   Badge, MetricCard, UsersTable, DashboardHeader
+│   └── lib/
+│       ├── db.ts                     SQLite + seed determinista
+│       ├── auth.ts                   firmar/verificar JWT
+│       ├── api.ts                    fetch con Bearer + manejo de 401
+│       └── types.ts                  tipos compartidos
+├── scripts/reset-db.mjs              borra la base local (se regenera sola)
+├── README.md                         estas instrucciones
+├── AI-LOG.md                         bitácora del uso de IA (obligatoria)
+├── AGENTS.md                         contexto que se le entrega a los agentes de IA
+├── .env.example                      variables necesarias
+├── package.json
+├── next.config.mjs
+├── postcss.config.mjs
+└── tsconfig.json
 ```
+
+Generados en runtime y **no versionados** (están en `.gitignore`): `data/` (la base
+SQLite), `.env` (tu secreto) y `.next/` (el build).
 
 ## Limitaciones conocidas (lo que NO está hecho)
 
