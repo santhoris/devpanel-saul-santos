@@ -23,7 +23,7 @@ el servidor recibe una petición. No hay paso de migración ni de seed manual.
 **Requisito único:** Node.js 20 o superior. Comprobar con `node -v`.
 
 ```bash
-git clone https://github.com/USUARIO/devpanel-saul.git
+git clone https://github.com/santhoris/devpanel-saul.git
 cd devpanel-saul
 npm install
 cp .env.example .env
