@@ -10,7 +10,7 @@ decidí yo.
 | Herramienta | Para qué |
 |---|---|
 | **Hermes Agent** (agente de terminal con el modelo `deepseek-v4-flash`) | Generación del grueso del código, estructura del proyecto, redacción de esta bitácora. Trabaja por su cuenta en el terminal: escribe archivos, corre el build y prueba los endpoints. |
-| **OpenCode CLI** (v1.18.33, proveedor DeepSeek) | Intento de revisión de código independiente sobre el repo ya escrito. Ver §4.2: **no llegó a entregar resultado**. |
+| **OpenCode CLI** (v1.18.33, proveedor DeepSeek) | Revisión de código independiente sobre el repo ya escrito. Con un alcance amplio no entregó nada en 5 minutos y hubo que matarlo; acotado a un solo archivo respondió en segundos. Detalle en §4.2. |
 
 No usé Claude Code, así que no hay `CLAUDE.md`. Sí dejé un **`AGENTS.md`** en la
 raíz con el contexto del repo (stack, convenciones, reglas) que le pasé a
@@ -141,6 +141,27 @@ después de una carga exitosa. Añadí `setError(null)` al iniciar cada fetch.
 **(e) Rechacé `bcryptjs`.** Era la opción por defecto razonable; la cambié por
 `scrypt` nativo (ver §2). Menos dependencias y más fuerte.
 
+**(f) El login venía con las credenciales de demo puestas como valor inicial.**
+El componente hacía `useState("admin@devpanel.io")` y `useState("Admin123!")`, así
+que los dos campos aparecían rellenos **siempre**, incluso en una ventana de
+incógnito donde no existe ninguna sesión guardada. Lo detecté probando el P0 de
+la ruta protegida: al abrir `/dashboard` sin sesión me redirigió al login (eso
+estaba bien), pero al llegar vi los campos ya escritos y eso me hizo dudar de si
+el navegador me estaba recordando algo o de si la sesión venía de otro lado.
+
+Revisé los requisitos para ver si aquello era una regla y **no lo era**: el único
+punto cercano es "no dejes usuarios fijos en un archivo JSON", que habla del
+dataset de usuarios — y eso sí está bien resuelto, los usuarios viven en SQLite
+con seed (`src/lib/db.ts`), no en un JSON. Así que el relleno no rompía ninguna
+regla, pero tampoco era un requisito: era una decisión de comodidad mal
+ejecutada.
+
+El riesgo real es de lectura: dentro del componente eso se ve como credenciales
+hardcodeadas (code smell) y hace que el login parezca una demo descuidada en vez
+de un login real. **Lo rechacé:** los campos arrancan vacíos y añadí un enlace
+"Usar credenciales demo" que los rellena de un clic, dejando el texto de ayuda y
+la tabla del README intactos para que el evaluador no pierda tiempo tecleando.
+
 ### 4.2 Rechacé el resultado de OpenCode (primero porque no hubo resultado)
 
 Le pedí a OpenCode la revisión del §3.2 (intento A: 6 archivos, "lista máximo 6
@@ -177,6 +198,11 @@ visual del código generado:
 | `GET /api/metrics` | contadores | ✅ total 137, activos 81, admins 15, pendientes 26 |
 | `GET /api/auth/me` con token basura | 401 | ✅ 401 |
 | `npm run build` (compila + typecheck estricto) | 0 errores | ✅ |
+| Login sin sesión: inputs vacíos | `value=""` en ambos inputs | ✅ (antes traían las credenciales de demo → hallazgo (f)) |
+
+Además miré el HTML que sirve el servidor para confirmar que la búsqueda devuelve
+`content-type: application/json` — es decir, es una petición de datos y no una
+recarga de página.
 
 ## 6. Estimación honesta: % de código de la IA vs mío
 
@@ -188,7 +214,7 @@ El agente escribió prácticamente todo el código. Mi parte fue:
   `bcryptjs` y el scaffold por defecto de `create-next-app`).
 - **Fijar las restricciones** del prompt (sin `any`, capa de datos centralizada,
   nada de credenciales hacia el cliente).
-- **Rechazar y corregir** los cinco puntos del §4.
+- **Rechazar y corregir** los seis puntos del §4.
 - **Validar** end-to-end con curl y el build, que es donde aparecieron los bugs
   reales.
 - **Recortar alcance**: dejé P2 (filtros por rol/estado sí, diseño fino no) y el
