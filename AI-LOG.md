@@ -267,11 +267,27 @@ petición acotada a un archivo respondió al instante — la IA acelera escribir
 reemplaza verificar, y el tamaño del encargo decide si el agente sirve o se
 atasca.
 
-## 8. Pulido posterior al cierre: re-skin visual (Credicorp Bank)
+## 8. Pulido visual: re-skin a Credicorp Bank (dentro de las 2 h)
 
-**Esto es posterior al límite de las 2 h.** El cuerpo del examen (commits
-`6f23476`..`ad5d3ee`) quedó congelado funcionalmente; lo que sigue es una
-iteración de **presentación**, no de lógica.
+**Todo lo de esta sección entró dentro de las 2 horas del examen.** El correo de
+inicio llegó a las 15:02, así que la ventana terminaba alrededor de las 17:02; el
+último commit es de las 16:58. El cuerpo funcional del examen (commits
+`6f23476`..`ad5d3ee`) quedó congelado a las 16:11; lo que sigue es una iteración
+de **presentación** (y en §9 de seguridad), nunca de lógica.
+
+**Línea de tiempo (hora local, tomada de los propios commits):**
+
+| Hora | Hito |
+|---|---|
+| 15:02 | Llega el correo con el examen (inicio del reloj) |
+| 15:21 | Bootstrap + capa de datos + auth + endpoints + UI (6 commits) |
+| 15:28 | Bugs corregidos: comodines del `LIKE` y documentación inicial |
+| 15:43 | README con el arranque copiar-pegar |
+| 16:07 | Arreglo del login prellenado (hallazgo propio) |
+| 16:11 | Cuerpo del examen cerrado |
+| 16:44 | Re-skin visual a Credicorp Bank |
+| 16:57 | Extra de seguridad: rate limiting del login |
+| 16:58 | Verificación final desde clon limpio y último commit |
 
 **Qué cambié y por qué.** La UI venía con la estética por defecto de un panel
 generado por IA: fondo `slate-950` oscuro + acento `indigo`/violeta. Se veía
@@ -308,7 +324,7 @@ validación del cuerpo original, no en esta capa cosmética.
 
 ---
 
-## 9. Extras de seguridad (también posterior al cierre)
+## 9. Extras de seguridad (también dentro de las 2 h)
 
 **Defensa contra fuerza bruta en el login.** Es el único extra de seguridad que
 implementé, y lo elegí a propósito por ser **aditivo**: no toca ninguna de las
