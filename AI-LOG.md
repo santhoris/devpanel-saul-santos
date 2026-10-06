@@ -279,3 +279,36 @@ logout, 401, reload e incógnito). Comprobé por grep que no quedara ningún
 de dirección estética y decisiones (tema claro, verde esmeralda, solo UI, cards
 con acento sutil). El valor del examen sigue estando en las decisiones y la
 validación del cuerpo original, no en esta capa cosmética.
+
+---
+
+## 9. Extras de seguridad (también posterior al cierre)
+
+**Defensa contra fuerza bruta en el login.** Es el único extra de seguridad que
+implementé, y lo elegí a propósito por ser **aditivo**: no toca ninguna de las
+decisiones del cuerpo del examen, así que no puede romper los P0.
+
+- **Qué hace:** ventana deslizante de 15 minutos con un máximo de 10 intentos
+  **fallidos** por clave `IP+email` (`src/lib/rate-limit.ts`). Al pasarse
+  responde `429 Too Many Requests` con la cabecera `Retry-After`.
+- **Dos decisiones que importan:** solo cuentan los fallos (un login correcto no
+  consume cupo y además limpia el contador), y la clave combina `IP+email` para
+  que atacar un email inventado no bloquee la cuenta real desde tu misma IP.
+- **Límite configurable** por variable de entorno (`LOGIN_RATE_LIMIT`, por defecto
+  10) y documentado en el `.env.example`, precisamente para que un evaluador que
+  falle la clave varias veces no se quede bloqueado sin entender por qué. Reiniciar
+  el servidor limpia el estado.
+- **Verificado:** 10 intentos fallidos → 401; el 11 y el 12 → 429 con
+  `Retry-After: 900`; y el login correcto desde la misma IP seguía devolviendo 200
+  (o sea, el panel no se bloqueó a sí mismo). El resto del checklist P0/P1 volvió a
+  pasar después del cambio.
+- **Limitación declarada, no escondida:** el contador vive en memoria del proceso.
+  En un despliegue con varias instancias habría que moverlo a un almacén
+  compartido (Redis); con una sola instancia es correcto.
+
+**Lo que decidí NO hacer y por qué:** pasar el token de `localStorage` a una cookie
+`httpOnly` sería más seguro frente a XSS, pero rompería la decisión ya documentada
+del P0 (sesión que sobrevive al reload) y obligaría a reescribir README y AI-LOG
+con el reloj encima. Se deja como trade-off documentado en las limitaciones.
+Tampoco añadí CSRF (no usamos cookies de sesión, no aplica) ni 2FA (fuera del
+alcance de la prueba).

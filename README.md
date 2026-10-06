@@ -87,6 +87,11 @@ hacer `npm install && npm run dev` dentro de la carpeta.
 - **Búsqueda y paginación resueltas en SQL**, no en memoria: el `LIKE` y el
   `LIMIT/OFFSET` corren en el backend y el buscador tiene debounce de 300 ms.
 
+- **Rate limiting en el login (anti fuerza bruta).** Ventana deslizante de 15 min:
+  10 intentos fallidos por `IP+email` y responde `429` con `Retry-After`. Solo
+  cuentan los fallos (un login correcto no consume cupo) y la clave es `ip:email`
+  para que atacar un email inventado no bloquee la cuenta real.
+
 ## Endpoints
 
 | Método | Ruta               | Auth | Descripción                                    |
@@ -145,7 +150,10 @@ SQLite), `.env` (tu secreto) y `.next/` (el build).
   puede leerlo, así que la redirección la decide el cliente. El contenido del
   dashboard nunca se sirve desde el servidor (solo se pide el JSON ya
   autenticado), pero con JavaScript deshabilitado no habría redirección.
-- **Sin rate limiting en el login** ni bloqueo por intentos fallidos.
+- **El rate limiting del login vive en la memoria del proceso.** En local es
+  suficiente (un solo proceso), pero con varias instancias en producción
+  necesitaría un almacén compartido (Redis). Tampoco hay bloqueo permanente de
+  cuenta, solo la ventana de 15 minutos.
 - **Búsqueda con `LIKE` simple**, sin índices de texto completo (`FTS5`).
 - **Token en `localStorage`**, vulnerable a XSS. Una cookie `httpOnly` sería más
   segura; con el tiempo disponible se aceptó el trade-off.
