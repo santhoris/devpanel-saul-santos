@@ -117,6 +117,11 @@ src/
 - **Sin roles aplicados de verdad.** El campo `role` se muestra y se filtra, pero
   ningún endpoint restringe acciones por rol: hoy cualquier usuario autenticado
   puede listar usuarios. Sería el primer control a añadir en producción.
+- **El guard de la ruta protegida es del lado del cliente**, no un middleware de
+  Next. Es consecuencia de guardar el token en `localStorage`: el servidor no
+  puede leerlo, así que la redirección la decide el cliente. El contenido del
+  dashboard nunca se sirve desde el servidor (solo se pide el JSON ya
+  autenticado), pero con JavaScript deshabilitado no habría redirección.
 - **Sin rate limiting en el login** ni bloqueo por intentos fallidos.
 - **Búsqueda con `LIKE` simple**, sin índices de texto completo (`FTS5`).
 - **Token en `localStorage`**, vulnerable a XSS. Una cookie `httpOnly` sería más
