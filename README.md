@@ -1,35 +1,11 @@
 # DevPanel — Mini panel de administración
 
-Prueba técnica: login, dashboard con métricas y tabla de usuarios con búsqueda.
+Prueba técnica: login real, dashboard con métricas y tabla de usuarios con búsqueda.
+Todo corre en un solo proceso, sin Docker y sin base de datos externa.
 
-## Stack
+---
 
-Next.js 15 (App Router) + TypeScript estricto · Tailwind CSS v4 · SQLite (`better-sqlite3`) · JWT HS256 (`jose`) + `scrypt` nativo de Node.
-
-## Prerrequisitos
-
-- Node.js 20 o superior (probado en Node 24)
-- npm
-- No hace falta Docker ni un motor de base de datos: SQLite es un archivo local.
-
-## Cómo correr (copy-paste)
-
-```bash
-git clone <URL-del-repo>
-cd devpanel-saul
-npm install
-cp .env.example .env      # opcional: ya hay un .env funcional en el repo para local
-npm run dev
-```
-
-Abrir http://localhost:3000
-
-La base de datos (`data/devpanel.db`) se crea y se puebla sola con 137 usuarios
-la primera vez que el servidor recibe una petición. No hay paso de migración.
-
-Para regenerar los datos desde cero: `npm run reset-db` y volver a levantar el server.
-
-## Credenciales de prueba
+## Credenciales de prueba (para entrar de una)
 
 | Rol    | Email                 | Password     |
 |--------|-----------------------|--------------|
@@ -37,43 +13,111 @@ Para regenerar los datos desde cero: `npm run reset-db` y volver a levantar el s
 | editor | editor@devpanel.io    | `Editor123!` |
 | viewer | viewer@devpanel.io    | `Viewer123!` |
 
-Los 134 usuarios generados comparten la password `Password123!`.
+La base de datos se crea y se puebla **sola** con 137 usuarios la primera vez que
+el servidor recibe una petición. No hay paso de migración ni de seed manual.
+
+---
+
+## Levantarlo (copy-paste, ~2 minutos)
+
+**Requisito único:** Node.js 20 o superior. Comprobar con `node -v`.
+
+```bash
+git clone https://github.com/USUARIO/devpanel-saul.git
+cd devpanel-saul
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Abrir **http://localhost:3000** y entrar con `admin@devpanel.io` / `Admin123!`.
+
+Eso es todo. Si prefieres no clonar, también sirve descargar el ZIP del repo y
+hacer `npm install && npm run dev` dentro de la carpeta.
+
+> El `cp .env.example .env` es recomendable (define el secreto con el que se
+> firman los tokens). Si lo omites, en desarrollo la app arranca igual avisando
+> por consola; en producción se niega a arrancar sin un secreto propio.
+
+### Comprobar en 60 segundos que funciona
+
+1. Entras con las credenciales de arriba → llegas al dashboard.
+2. El dashboard muestra 4 tarjetas (137 usuarios, 81 activos, 15 admins, 26 pendientes).
+3. Escribes `ana` en el buscador → la tabla filtra sin recargar la página.
+4. Recargas con F5 → sigues dentro (sesión persistente).
+5. Abres http://localhost:3000/dashboard en una ventana de incógnito → te manda al login (ruta protegida).
+
+### Otros comandos
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo en el puerto 3000 |
+| `npm run build` | Build de producción + typecheck estricto |
+| `npm start` | Corre el build de producción |
+| `npm run reset-db` | Borra la base local; se regenera sola al arrancar |
+
+---
+
+## Stack
+
+**Next.js 15 (App Router) + TypeScript estricto · Tailwind CSS v4 · SQLite (`better-sqlite3`) · JWT HS256 (`jose`) + `scrypt` nativo de Node.**
 
 ## Decisiones técnicas clave
 
-- **Un solo proyecto Next.js en lugar de front + back separados.** Con 2 horas de
-  reloj, ahorrarse el split, el proxy/CORS y el doble arranque vale más que la
-  pureza arquitectónica. Las API routes son el backend.
-- **SQLite con `better-sqlite3`.** Cero infraestructura: un archivo, se versiona
-  fuera de git y se recrea solo. `better-sqlite3` es síncrono, así que no hay
-  `await` en la capa de datos ni riesgo de condiciones de carrera.
-- **Sesión con JWT en `localStorage`.** Sobrevive al reload (requisito P0). El
-  token viaja en `Authorization: Bearer`, y un único wrapper de fetch (`apiFetch`)
-  intercepta el 401 para limpiar la sesión y redirigir al login.
-- **`scrypt` de Node en vez de `bcryptjs`.** Es más fuerte, viene en el runtime y
-  evita una dependencia JS pura más lenta. Comparación con `timingSafeEqual`.
-- **Búsqueda y paginación en SQL.** El `search` con `LIKE` y el `LIMIT/OFFSET`
-  corren en el backend; el cliente solo manda query params. El input tiene
-  debounce de 300 ms, así que no hay fetch por tecla.
+- **Un solo proyecto Next.js en lugar de front + back separados.** Con un límite
+  de 2 horas, el split cuesta dos servidores, CORS y dos `package.json`. Las API
+  routes son el backend y un solo `npm run dev` levanta todo.
+- **SQLite con `better-sqlite3`.** Cero infraestructura: un archivo local que está
+  en `.gitignore` y se recrea solo. El driver es síncrono, así que la capa de datos
+  no tiene `await` ni estados intermedios.
+- **Sesión con JWT en `localStorage`.** Es lo que hace que la sesión sobreviva al
+  reload con el mínimo código. El token viaja como `Authorization: Bearer` y un
+  único wrapper de fetch intercepta el 401 para limpiar la sesión y volver al login.
+- **`scrypt` de Node en vez de `bcryptjs`.** Más fuerte, ya viene en el runtime y
+  evita una dependencia JS pura más lenta. La comparación usa `timingSafeEqual`.
+- **Búsqueda y paginación resueltas en SQL**, no en memoria: el `LIKE` y el
+  `LIMIT/OFFSET` corren en el backend y el buscador tiene debounce de 300 ms.
 
 ## Endpoints
 
-| Método | Ruta               | Auth | Descripción                                   |
-|--------|--------------------|------|-----------------------------------------------|
-| POST   | `/api/auth/login`  | no   | `{email, password}` → `{token, user}`          |
-| GET    | `/api/auth/me`     | sí   | Valida el token y devuelve el usuario          |
-| GET    | `/api/users`       | sí   | `?search=&role=&status=&page=&limit=`          |
-| GET    | `/api/metrics`     | sí   | Contadores del dashboard                       |
+| Método | Ruta               | Auth | Descripción                                    |
+|--------|--------------------|------|------------------------------------------------|
+| POST   | `/api/auth/login`  | no   | `{email, password}` → `{token, user}`           |
+| GET    | `/api/auth/me`     | sí   | Valida el token y devuelve el usuario           |
+| GET    | `/api/users`       | sí   | `?search=&role=&status=&page=&limit=`           |
+| GET    | `/api/metrics`     | sí   | Contadores del dashboard                        |
+
+## Estructura
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── auth/login/route.ts   POST login
+│   │   ├── auth/me/route.ts      validar sesión
+│   │   ├── users/route.ts        listado + búsqueda + paginación
+│   │   └── metrics/route.ts      métricas del dashboard
+│   ├── login/page.tsx
+│   ├── dashboard/page.tsx        ruta protegida
+│   └── layout.tsx
+├── components/                   Badge, MetricCard, UsersTable, DashboardHeader
+└── lib/
+    ├── db.ts                     SQLite + seed determinista
+    ├── auth.ts                   firmar/verificar JWT
+    ├── api.ts                    fetch con Bearer + manejo de 401
+    └── types.ts                  tipos compartidos
+```
 
 ## Limitaciones conocidas (lo que NO está hecho)
 
 - **Sin refresh token.** El JWT dura 2 h y caduca; al vencer, el 401 te devuelve
   al login. No hay renovación silenciosa.
 - **Sin tests automatizados.** Se priorizó llegar a los P0 funcionales; la
-  verificación fue manual (curl + navegador).
-- **Sin roles aplicados de verdad.** El campo `role` se muestra y filtra, pero
-  ningún endpoint restringe acciones por rol: hoy todo usuario autenticado puede
-  listar usuarios. En producción sería el primer control a añadir.
+  verificación fue manual (curl contra los endpoints + navegador).
+- **Sin roles aplicados de verdad.** El campo `role` se muestra y se filtra, pero
+  ningún endpoint restringe acciones por rol: hoy cualquier usuario autenticado
+  puede listar usuarios. Sería el primer control a añadir en producción.
 - **Sin rate limiting en el login** ni bloqueo por intentos fallidos.
 - **Búsqueda con `LIKE` simple**, sin índices de texto completo (`FTS5`).
-- **Sin modo oscuro/claro conmutables**: la UI es fija en tema oscuro.
+- **Token en `localStorage`**, vulnerable a XSS. Una cookie `httpOnly` sería más
+  segura; con el tiempo disponible se aceptó el trade-off.
