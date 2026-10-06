@@ -32,6 +32,10 @@ npm run dev
 
 Abrir **http://localhost:3000** y entrar con `admin@devpanel.io` / `Admin123!`.
 
+El formulario de login arranca vacío (como un login real). Debajo hay un enlace
+**"Usar credenciales demo"** que rellena los dos campos de un clic si no quieres
+teclearlas.
+
 Eso es todo. Si prefieres no clonar, también sirve descargar el ZIP del repo y
 hacer `npm install && npm run dev` dentro de la carpeta.
 
@@ -41,7 +45,7 @@ hacer `npm install && npm run dev` dentro de la carpeta.
 
 ### Comprobar en 60 segundos que funciona
 
-1. Entras con las credenciales de arriba → llegas al dashboard.
+1. Abres http://localhost:3000/login → los campos están vacíos; el enlace "Usar credenciales demo" los rellena y entras → llegas al dashboard.
 2. El dashboard muestra 4 tarjetas (137 usuarios, 81 activos, 15 admins, 26 pendientes).
 3. Escribes `ana` en el buscador → la tabla filtra sin recargar la página.
 4. Recargas con F5 → sigues dentro (sesión persistente).

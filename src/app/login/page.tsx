@@ -7,8 +7,10 @@ import type { LoginResponse } from "@/lib/types";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@devpanel.io");
-  const [password, setPassword] = useState("Admin123!");
+  // Los campos arrancan vacios, como un login real. Las credenciales de demo
+  // se ofrecen con un boton explicito, no como valor inicial del formulario.
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,6 +35,12 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function fillDemoCredentials() {
+    setEmail("admin@devpanel.io");
+    setPassword("Admin123!");
+    setError(null);
   }
 
   return (
@@ -100,9 +108,16 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-4 text-center text-xs text-slate-500">
-          Demo: admin@devpanel.io / Admin123!
-        </p>
+        <div className="mt-4 space-y-2 text-center">
+          <button
+            type="button"
+            onClick={fillDemoCredentials}
+            className="text-xs font-medium text-indigo-400 underline-offset-4 transition hover:text-indigo-300 hover:underline"
+          >
+            Usar credenciales demo
+          </button>
+          <p className="text-xs text-slate-500">admin@devpanel.io / Admin123!</p>
+        </div>
       </div>
     </main>
   );
