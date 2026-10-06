@@ -204,6 +204,32 @@ Además miré el HTML que sirve el servidor para confirmar que la búsqueda devu
 `content-type: application/json` — es decir, es una petición de datos y no una
 recarga de página.
 
+### Verificación final desde un clon limpio
+
+Antes de cerrar, cloné el repo público **en anónimo (sin credenciales)** y seguí
+el README al pie de la letra, en una carpeta aparte y levantando el servidor en
+otro puerto para no interferir con mi entorno de trabajo:
+
+| Paso | Resultado |
+|---|---|
+| `git clone` anónimo | OK · 29 archivos · 312 KB sin `node_modules` |
+| `npm install` | 86 paquetes · 9 s |
+| `npm run build` | compila · typecheck estricto · 0 errores · 4,8 s |
+| `/login` y `/logo.jpg` | 200 |
+| `POST /api/auth/login` | devuelve token |
+| `/api/users` sin token / con token | 401 / 200 |
+| `/api/metrics` | 137 totales · 81 activos · 15 admins · 26 pendientes |
+| `search=ana` / `search=%` | 1 resultado / 0 resultados (comodines escapados) |
+| paginación | 1 de 14 (10 filas) · 2 de 14 (10) · 14 de 14 (7) |
+| filtros | admin 15 · editor 45 · pending 26 · admin+active 11 |
+
+Y después de añadir el rate limiting (§9) repetí el checklist del login: 10
+intentos fallidos → 401, el 11 → 429 con `Retry-After: 900`, y el login correcto
+seguía devolviendo 200.
+
+Traducción: lo que promete este README no es una promesa, es una prueba que
+cualquiera puede repetir desde cero en otro equipo.
+
 ## 6. Estimación honesta: % de código de la IA vs mío
 
 **≈ 85 % IA / 15 % mío.**
