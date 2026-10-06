@@ -1,7 +1,25 @@
 import { SignJWT, jwtVerify } from "jose";
 
+const SECRET_BYTES = 32;
+const rawSecret = process.env.JWT_SECRET ?? "";
+
+// En produccion un secreto por defecto firmaria tokens que cualquiera puede
+// falsificar: mejor romper el arranque que servir sesiones inseguras.
+if (rawSecret.length < SECRET_BYTES) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      `JWT_SECRET debe tener al menos ${SECRET_BYTES} caracteres (revisa tu .env)`,
+    );
+  }
+  console.warn(
+    "[devpanel] JWT_SECRET ausente o muy corto: usando secreto de desarrollo.",
+  );
+}
+
 const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "devpanel-dev-only-secret-change-me-0123456789abcdef",
+  rawSecret.length >= SECRET_BYTES
+    ? rawSecret
+    : "devpanel-dev-only-secret-change-me-0123456789abcdef",
 );
 
 export const TOKEN_TTL = "2h";

@@ -156,6 +156,7 @@ export function seedIfEmpty(): number {
 
   const now = Date.now();
   const DAY = 86_400_000;
+  const BULK = 134;
 
   const run = db.transaction(() => {
     for (const account of DEMO_ACCOUNTS) {

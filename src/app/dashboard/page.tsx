@@ -88,6 +88,7 @@ export default function DashboardPage() {
     if (!ready) return;
     let active = true;
     setLoadingUsers(true);
+    setError(null);
 
     const query = new URLSearchParams({
       page: String(page),

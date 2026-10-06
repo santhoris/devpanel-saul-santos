@@ -35,8 +35,11 @@ export async function GET(req: Request): Promise<NextResponse> {
   const params: (string | number)[] = [];
 
   if (search) {
-    conditions.push("(name LIKE ? OR email LIKE ?)");
-    params.push(`%${search}%`, `%${search}%`);
+    // Los comodines de LIKE en la busqueda se escapan: si el usuario teclea
+    // "%" o "_" no debe comportarse como patron.
+    conditions.push("(name LIKE ? ESCAPE '\\' OR email LIKE ? ESCAPE '\\')");
+    const escaped = search.replace(/[\\%_]/g, (char) => `\\${char}`);
+    params.push(`%${escaped}%`, `%${escaped}%`);
   }
   if (ROLES.has(role)) {
     conditions.push("role = ?");
