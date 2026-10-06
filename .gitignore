@@ -20,3 +20,10 @@ data/
 *.log
 npm-debug.log*
 .DS_Store
+
+# Basura de Windows y caches de compilacion
+# Windows adjunta un flujo :Zone.Identifier a los archivos que se descargan; en
+# WSL aparece como un archivo aparte y se colaria en cualquier `git add -A`.
+*:Zone.Identifier
+# Cache incremental de TypeScript (lo genera `tsc` y el tsconfig tiene incremental)
+*.tsbuildinfo
