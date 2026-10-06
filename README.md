@@ -33,11 +33,8 @@ cp .env.example .env
 npm run dev
 ```
 
-Abrir **http://localhost:3000** y entrar con `admin@devpanel.io` / `Admin123!`.
-
-El formulario de login arranca vacío (como un login real). Debajo hay un enlace
-**"Usar credenciales demo"** que rellena los dos campos de un clic si no quieres
-teclearlas.
+Abrir **http://localhost:3000** y entrar con `admin@devpanel.io` / `Admin123!`
+(ver arriba: el login arranca vacío y hay un enlace para rellenarlas).
 
 Eso es todo. Si prefieres no clonar, también sirve descargar el ZIP del repo y
 hacer `npm install && npm run dev` dentro de la carpeta.
